@@ -1,17 +1,34 @@
 # lazy build C project Makefiles by impressionyang
 # user config values
-CC="E:\\impressionyang\\scoop\\apps\\mingw\\12.2.0\\bin\\gcc.exe"
+CC="/usr/bin/gcc"
+# CC="E:\\impressionyang\\scoop\\apps\\mingw\\12.2.0\\bin\\gcc.exe"
 PROJECT=test
+
+# check operating system type
+ifeq ($(OS), Windows_NT)
+	OS_TYPE := WINDOWS
+	SHELL := cmd
+else
+	UNAME_S := $(shell uname -s)
+    ifeq ($(UNAME_S),Linux)
+        OS_TYPE := LINUX
+    endif
+    ifeq ($(UNAME_S),Darwin)
+        OS_TYPE := OSX
+    endif
+endif
+
+$(info OS type = $(OS_TYPE))
 
 # patern config
 FILES_PATH  := ./
 SRC_FILES_SUFFIX := %.c
 HDR_FILES_SUFFIX := %.h
 
-# define func to remove_same_str
+# define func to remove_same_str for debug: $(info get seen ${seen})
 define remove_same_str =
   $(eval seen :=)
-  $(foreach _,$1,$(if $(filter $_,${seen}),,$(eval seen += $_)))
+  $(foreach _,$1,$(if $(filter $_,${seen}),,$(if $_, $(eval seen += $_)))) 
   ${seen}
 endef
 
@@ -27,7 +44,9 @@ HEADERS  := $(HEADERS:$(LOCAL_PATH)/%=%)
 
 # fillter out all include path
 FIND_ALL_FILES_DIR := $(dir $(foreach files_path,$(FILES_PATH), $(call rwildcard,$(files_path),*/) ) )
-INC_DIRS := $(call remove_same_str,$(FIND_ALL_FILES_DIR))
+GET_INC_DIRS := $(call remove_same_str,$(FIND_ALL_FILES_DIR))
+INC_DIRS :=
+INC_DIRS += $(foreach v, $(GET_INC_DIRS), $(if $(filter %/,$v) , $(eval INC_DIRS+=$v), ))
 INC_DIRS := $(subst ./, -I./, $(INC_DIRS))
 INC_DIRS := $(wordlist 1, $(words $(INC_DIRS)), $(INC_DIRS))
 
@@ -46,5 +65,13 @@ all :
 # virtual clean job
 .PHONY : clean
 clean:
-	$(warning "remove some files but it may not exist because the OS different")
-	rm $(PROJECT).exe $(PROJECT)
+ifeq ($(OS_TYPE), WINDOWS)
+	del $(PROJECT).exe
+endif
+ifeq ($(OS_TYPE), LINUX)
+	rm $(PROJECT)
+endif
+ifeq ($(OS_TYPE), OSX)
+	rm $(PROJECT)
+endif
+	
