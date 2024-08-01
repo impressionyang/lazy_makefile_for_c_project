@@ -25,6 +25,10 @@ FILES_PATH  := ./
 SRC_FILES_SUFFIX := %.c
 HDR_FILES_SUFFIX := %.h
 
+# add build flags
+CFLAGS += -fdiagnostics-color=always -g 
+CFLAGS += -lm
+
 # define func to remove_same_str for debug: $(info get seen ${seen})
 define remove_same_str =
   $(eval seen :=)
@@ -60,7 +64,7 @@ INC_DIRS := $(wordlist 1, $(words $(INC_DIRS)), $(INC_DIRS))
 
 # compile job
 all : 
-	$(CC) -fdiagnostics-color=always -g $(SOURCES) $(HEADERS) $(INC_DIRS) -o $(PROJECT)
+	$(CC) $(CFLAGS) $(SOURCES) $(HEADERS) $(INC_DIRS) -o $(PROJECT)
 
 # virtual clean job
 .PHONY : clean
