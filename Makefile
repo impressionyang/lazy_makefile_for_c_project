@@ -3,6 +3,7 @@
 CC="/usr/bin/gcc"
 # CC="E:\\impressionyang\\scoop\\apps\\mingw\\12.2.0\\bin\\gcc.exe"
 PROJECT=test
+BUILD_DIR=build
 
 # check operating system type
 ifeq ($(OS), Windows_NT)
@@ -64,7 +65,8 @@ INC_DIRS := $(wordlist 1, $(words $(INC_DIRS)), $(INC_DIRS))
 
 # compile job
 all : 
-	$(CC) $(CFLAGS) $(SOURCES) $(HEADERS) $(INC_DIRS) -o $(PROJECT)
+	mkdir -p $(BUILD_DIR) 
+	$(CC) $(CFLAGS) $(SOURCES) $(HEADERS) $(INC_DIRS) -o $(BUILD_DIR)/$(PROJECT)
 
 # virtual clean job
 .PHONY : clean
