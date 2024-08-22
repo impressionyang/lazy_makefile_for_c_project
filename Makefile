@@ -72,12 +72,12 @@ all :
 .PHONY : clean
 clean:
 ifeq ($(OS_TYPE), WINDOWS)
-	del $(PROJECT).exe
+	del $(BUILD_DIR)/$(PROJECT).exe
 endif
 ifeq ($(OS_TYPE), LINUX)
-	rm $(PROJECT)
+	rm $(BUILD_DIR)/$(PROJECT)
 endif
 ifeq ($(OS_TYPE), OSX)
-	rm $(PROJECT)
+	rm $(BUILD_DIR)/$(PROJECT)
 endif
 	
